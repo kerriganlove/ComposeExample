@@ -1,6 +1,7 @@
 package com.learning.composeexample.ui.baseview
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,36 +36,35 @@ fun DefaultRow() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultCard(
-    modifier : Modifier = Modifier,
-    painter : Painter,
-    contentDescription : String,
-    title : String,
+    modifier: Modifier = Modifier,
+    painter: Painter,
+    contentDescription: String,
+    title: String,
+    onClick: () -> Unit
 ) {
-    val defaultScope = rememberCoroutineScope()
-    val snackBarHost = remember { SnackbarHostState() }
-    Scaffold(
-        snackbarHost = {SnackbarHost(snackBarHost)},
-    ) { value ->
-        Card(
-            modifier = modifier.fillMaxWidth().padding(value),
-            shape = RoundedCornerShape(20.dp),
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        shape = RoundedCornerShape(20.dp),
 
-            ) {
-            Box(Modifier.clickable {
-                defaultScope.launch {
-                    snackBarHost.showSnackbar("clicked $title")
-                }
-            }) {
-                Image(painter = painter,
-                    contentDescription = contentDescription,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxWidth())
-                Text(text = title,
-                    style = TextStyle(color = Color.White, fontSize = 14.sp),
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(5.dp))
-            }
+        ) {
+        Box(Modifier.clickable {
+            onClick()
+        }) {
+            Image(
+                painter = painter,
+                contentDescription = contentDescription,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = title,
+                style = TextStyle(color = Color.White, fontSize = 14.sp),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(5.dp)
+            )
         }
     }
 }
