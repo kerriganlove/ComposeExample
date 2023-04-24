@@ -62,7 +62,7 @@ fun ComposeExampleTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = com.learning.composeexample.ui.theme.ExampleTypography,
         content = content
     )
 }
