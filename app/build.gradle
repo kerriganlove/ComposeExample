@@ -5,6 +5,13 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+ext {
+    internalVersionCode = 10001
+    internalVersionName = "1.00.01"
+    releaseVersionCode = 10000
+    releaseVersionName = "1.00.00"
+}
+
 android {
     namespace 'com.learning.composeexample'
     compileSdk 33
@@ -13,8 +20,6 @@ android {
         applicationId "com.learning.composeexample"
         minSdk 26
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -27,7 +32,45 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        inhouse {
+            initWith release
+            debuggable true
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
+        }
     }
+    // 대분류 ex) "dev", "type" 순서로 선언 시
+    flavorDimensions "type","env"
+    // 소분류 ex) tabletLaunch, tabletDev, phoneErrorTest...
+    productFlavors {
+        tablet {
+            dimension "type"// 임의값입니다... 의미 부여 ㄴ
+            resConfig "hdpi"
+        }
+        phone {
+            dimension "type"
+            resConfig "xxxhdpi"
+        }
+
+        launch {
+            dimension "env"
+            versionCode releaseVersionCode
+            versionName releaseVersionName
+        }
+        dev {
+            dimension "env"
+            versionCode internalVersionCode
+            versionName internalVersionName
+        }
+        errorTest {
+            dimension "env"
+            initWith dev
+            // error code 테스트 할 수 있도록 추가.
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -57,6 +100,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.compose.material3:material3:1.0.1'
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 
     // Test Code
     testImplementation 'junit:junit:4.13.2'
