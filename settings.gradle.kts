@@ -13,6 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "ComposeExample"
-include ':app'
-include ':data'
-
+include(":app")
+include(":data")

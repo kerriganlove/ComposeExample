@@ -1,33 +1,23 @@
-plugins {
-    id("kotlin-kapt")
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-}
 
-buildscript {
-    extra.apply {
-        set("internalVersionCode", 10001)
-        set("internalVersionName", "1.00.01")
-        set("releaseVersionCode", 10000)
-        set("releaseVersionName","1.00.00")
-    }
+@file:Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    alias(libs.plugins.android)
+    alias(libs.plugins.kotlin)
+    id("kotlin-kapt")
 }
 
 
 android {
-    namespace("com.learning.composeexample")
-    compileSdk(33)
+    namespace = "com.learning.composeexample"
+    compileSdk = 33
 
     defaultConfig {
-        applicationId("com.learning.composeexample")
-        minSdk(26)
-        targetSdk(33)
+        applicationId = "com.learning.composeexample"
+        minSdk = 26
+        targetSdk = 33
 
-        testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
-        vectorDrawables {
-            useSupportLibrary(true)
-        }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -53,22 +43,22 @@ android {
     productFlavors {
         create("tablet") {
             dimension = "type"// 임의값입니다... 의미 부여 ㄴ
-            resConfig = "hdpi"
+            resourceConfigurations.add("hdpi")
         }
         create("phone") {
             dimension = "type"
-            resConfig = "xxxhdpi"
+            resourceConfigurations.add("xxxhdpi")
         }
 
         create("launch") {
             dimension = "env"
-            versionCode = releaseVersionCode
-            versionName = releaseVersionName
+            versionCode = rootProject.extra["releaseVersionCode"] as Int
+            versionName = rootProject.extra["releaseVersionName"] as String
         }
         create("dev") {
             dimension = "env"
-            versionCode = internalVersionCode
-            versionName = internalVersionName
+            versionCode = rootProject.extra["internalVersionCode"] as Int
+            versionName = rootProject.extra["internalVersionName"] as String
         }
         create("errorTest") {
             dimension = "env"
@@ -78,8 +68,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -99,26 +89,23 @@ android {
 
 dependencies {
 
-    // Compose UI
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.compose.ui:ui:${compose_version}")
-    implementation("androidx.compose.ui:ui-tooling-preview:${compose_version}")
-    implementation("androidx.compose.material3:material3:1.0.1")
-    implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
-
-    // Test Code
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.4"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.0"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    // UI & Android Library
+    AppAndroid.libList.forEach {
+        implementation(it)
+    }
+    debugImplementation(AppSupport.COMPOSE_TOOLING)
 
     // Dagger-Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    AppAndroid.rejectionLibList.forEach {
+        implementation(it)
+    }
+
+    // Test Code
+    testImplementation(AppTest.JUNIT)
+    androidTestImplementation(AppTest.ANDROID_TEST_JUNIT)
+    androidTestImplementation(AppTest.ESPRESSO)
+    androidTestImplementation(AppTest.COMPOSE_JUNIT)
+    debugImplementation(AppTest.COMPOSE_UI_TEST)
 }
 
 kapt {
